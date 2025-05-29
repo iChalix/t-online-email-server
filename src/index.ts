@@ -17,7 +17,7 @@ class TOnlineEmailMCPServer {
   private emailClient: EmailClient;
 
   constructor() {
-    debugLog('Initialisiere MCP-Server', { name: config.server.name });
+    debugLog('Initializing MCP Server', { name: config.server.name });
     
     this.server = new Server(
       {
@@ -36,13 +36,13 @@ class TOnlineEmailMCPServer {
   }
 
   private setupToolHandlers() {
-    // Liste verfügbarer Tools
+    // List of available tools
     this.server.setRequestHandler(ListToolsRequestSchema, async () => {
       return {
         tools: [
           {
             name: 'search_emails',
-            description: 'Durchsuche E-Mails nach verschiedenen Kriterien',
+            description: 'Search emails by various criteria',
             inputSchema: {
               type: 'object',
               properties: {
@@ -61,7 +61,7 @@ class TOnlineEmailMCPServer {
           },
           {
             name: 'get_email_stats',
-            description: 'Zeige detaillierte Statistiken über das E-Mail-Konto an',
+            description: 'Show detailed statistics about the email account',
             inputSchema: {
               type: 'object',
               properties: {},
@@ -69,7 +69,7 @@ class TOnlineEmailMCPServer {
           },
           {
             name: 'get_folders',
-            description: 'Liste alle verfügbaren E-Mail-Ordner auf',
+            description: 'List all available email folders',
             inputSchema: {
               type: 'object',
               properties: {},
@@ -77,7 +77,7 @@ class TOnlineEmailMCPServer {
           },
           {
             name: 'create_folder',
-            description: 'Erstelle einen neuen E-Mail-Ordner',
+            description: 'Create a new email folder',
             inputSchema: {
               type: 'object',
               properties: {
@@ -88,7 +88,7 @@ class TOnlineEmailMCPServer {
           },
           {
             name: 'delete_folder',
-            description: 'Lösche einen E-Mail-Ordner',
+            description: 'Delete an email folder',
             inputSchema: {
               type: 'object',
               properties: {
@@ -99,7 +99,7 @@ class TOnlineEmailMCPServer {
           },
           {
             name: 'move_email',
-            description: 'Verschiebe eine E-Mail zwischen Ordnern',
+            description: 'Move an email between folders',
             inputSchema: {
               type: 'object',
               properties: {
@@ -112,7 +112,7 @@ class TOnlineEmailMCPServer {
           },
           {
             name: 'mark_as_read',
-            description: 'Markiere eine E-Mail als gelesen',
+            description: 'Mark an email as read',
             inputSchema: {
               type: 'object',
               properties: {
@@ -124,7 +124,7 @@ class TOnlineEmailMCPServer {
           },
           {
             name: 'mark_as_unread',
-            description: 'Markiere eine E-Mail als ungelesen',
+            description: 'Mark an email as unread',
             inputSchema: {
               type: 'object',
               properties: {
@@ -136,7 +136,7 @@ class TOnlineEmailMCPServer {
           },
           {
             name: 'delete_email',
-            description: 'Lösche eine E-Mail permanent',
+            description: 'Delete an email permanently',
             inputSchema: {
               type: 'object',
               properties: {
@@ -148,14 +148,14 @@ class TOnlineEmailMCPServer {
           },
           {
             name: 'batch_delete_emails',
-            description: 'Lösche mehrere E-Mails permanent (effizient für große Mengen)',
+            description: 'Delete multiple emails permanently (efficient for large batches)',
             inputSchema: {
               type: 'object',
               properties: {
                 uids: { 
                   type: 'array',
                   items: { type: 'number' },
-                  description: 'Array von E-Mail UIDs zum Löschen'
+                  description: 'Array of email UIDs to delete'
                 },
                 folder: { type: 'string', default: 'INBOX' },
               },
@@ -166,15 +166,15 @@ class TOnlineEmailMCPServer {
       };
     });
 
-    // Tool-Ausführung
+    // Tool execution
     this.server.setRequestHandler(CallToolRequestSchema, async (request) => {
       const { name, arguments: args } = request.params;
       
-      debugLog(`Tool-Aufruf: ${name}`, args);
+      debugLog(`Tool call: ${name}`, args);
 
       try {
         if (!this.emailClient) {
-          throw new Error('E-Mail-Client ist nicht initialisiert');
+          throw new Error('Email client is not initialized');
         }
         
         await this.emailClient.connect();
@@ -195,14 +195,14 @@ class TOnlineEmailMCPServer {
 
           case 'get_email_stats': {
             const stats = await this.emailClient.getEmailStats();
-            // Formatiere kompakte Ausgabe für weniger Token
-            const summary = `📧 E-Mail Statistiken:
-📊 Gesamt: ${stats.totalEmails} E-Mails
-📬 Ungelesen: ${stats.unreadEmails}
-✅ Gelesen: ${stats.readEmails}
+            // Format compact output for fewer tokens
+            const summary = `📧 Email Statistics:
+📊 Total: ${stats.totalEmails} emails
+📬 Unread: ${stats.unreadEmails}
+✅ Read: ${stats.readEmails}
 
-📁 Ordner (${stats.folders.length}):
-${stats.folders.map(f => `• ${f.name}: ${f.totalCount} (${f.unreadCount} ungelesen)`).join('\n')}`;
+📁 Folders (${stats.folders.length}):
+${stats.folders.map(f => `• ${f.name}: ${f.totalCount} (${f.unreadCount} unread)`).join('\n')}`;
             
             return {
               content: [
@@ -233,7 +233,7 @@ ${stats.folders.map(f => `• ${f.name}: ${f.totalCount} (${f.unreadCount} ungel
               content: [
                 {
                   type: 'text',
-                  text: `Ordner "${folderName}" wurde erfolgreich erstellt.`,
+                  text: `Folder "${folderName}" created successfully.`,
                 },
               ],
             };
@@ -245,7 +245,7 @@ ${stats.folders.map(f => `• ${f.name}: ${f.totalCount} (${f.unreadCount} ungel
               content: [
                 {
                   type: 'text',
-                  text: `Ordner "${folderName}" wurde erfolgreich gelöscht.`,
+                  text: `Folder "${folderName}" deleted successfully.`,
                 },
               ],
             };
@@ -262,7 +262,7 @@ ${stats.folders.map(f => `• ${f.name}: ${f.totalCount} (${f.unreadCount} ungel
               content: [
                 {
                   type: 'text',
-                  text: `E-Mail (UID: ${uid}) wurde von "${fromFolder}" nach "${toFolder}" verschoben.`,
+                  text: `Email (UID: ${uid}) moved from "${fromFolder}" to "${toFolder}".`,
                 },
               ],
             };
@@ -278,7 +278,7 @@ ${stats.folders.map(f => `• ${f.name}: ${f.totalCount} (${f.unreadCount} ungel
               content: [
                 {
                   type: 'text',
-                  text: `E-Mail (UID: ${uid}) wurde als gelesen markiert.`,
+                  text: `Email (UID: ${uid}) marked as read.`,
                 },
               ],
             };
@@ -294,7 +294,7 @@ ${stats.folders.map(f => `• ${f.name}: ${f.totalCount} (${f.unreadCount} ungel
               content: [
                 {
                   type: 'text',
-                  text: `E-Mail (UID: ${uid}) wurde als ungelesen markiert.`,
+                  text: `Email (UID: ${uid}) marked as unread.`,
                 },
               ],
             };
@@ -309,7 +309,7 @@ ${stats.folders.map(f => `• ${f.name}: ${f.totalCount} (${f.unreadCount} ungel
               content: [
                 {
                   type: 'text',
-                  text: `E-Mail (UID: ${uid}) wurde permanent gelöscht.`,
+                  text: `Email (UID: ${uid}) permanently deleted.`,
                 },
               ],
             };
@@ -325,33 +325,33 @@ ${stats.folders.map(f => `• ${f.name}: ${f.totalCount} (${f.unreadCount} ungel
               content: [
                 {
                   type: 'text',
-                  text: `✅ ${uids.length} E-Mails wurden permanent gelöscht.`,
+                  text: `✅ ${uids.length} emails permanently deleted.`,
                 },
               ],
             };
           }
 
           default:
-            throw new Error(`Unbekanntes Tool: ${name}`);
+            throw new Error(`Unknown tool: ${name}`);
         }
       } catch (error) {
         const errorMessage = error instanceof Error ? error.message : String(error);
-        debugLog(`Tool-Fehler bei ${name}`, error);
+        debugLog(`Tool error in ${name}`, error);
         
-        // Stelle sicher, dass Verbindung getrennt wird bei Fehlern
+        // Ensure connection is closed on errors
         try {
           if (this.emailClient) {
             await this.emailClient.disconnect();
           }
         } catch (disconnectError) {
-          debugLog('Fehler beim Trennen der Verbindung', disconnectError);
+          debugLog('Error disconnecting', disconnectError);
         }
         
         return {
           content: [
             {
               type: 'text',
-              text: `Fehler: ${errorMessage}`,
+              text: `Error: ${errorMessage}`,
             },
           ],
           isError: true,
@@ -361,18 +361,18 @@ ${stats.folders.map(f => `• ${f.name}: ${f.totalCount} (${f.unreadCount} ungel
   }
 
   async run() {
-    debugLog('Starte MCP-Server...');
+    debugLog('Starting MCP Server...');
     const transport = new StdioServerTransport();
     await this.server.connect(transport);
-    console.error(`${config.server.name} gestartet`);
+    console.error(`${config.server.name} started`);
   }
 }
 
-// Server starten
-debugLog('Lade Konfiguration und starte Server...');
+// Start server
+debugLog('Loading configuration and starting server...');
 const server = new TOnlineEmailMCPServer();
 server.run().catch((error) => {
-  debugLog('Server-Start-Fehler', error);
-  console.error('Fehler beim Starten des Servers:', error);
+  debugLog('Server startup error', error);
+  console.error('Error starting server:', error);
   process.exit(1);
 });

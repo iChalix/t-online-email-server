@@ -8,7 +8,7 @@ export class EmailClient {
   private isConnected: boolean = false;
 
   constructor() {
-    debugLog('Initialisiere E-Mail-Client mit Konfiguration aus .env');
+    debugLog('Initializing email client with configuration from .env');
     
     this.imap = new Imap({
       user: appConfig.email.address,
@@ -21,7 +21,7 @@ export class EmailClient {
       }
     });
     
-    debugLog('IMAP-Client konfiguriert', {
+    debugLog('IMAP client configured', {
       host: appConfig.email.imapHost,
       port: appConfig.email.imapPort,
       user: appConfig.email.address,
@@ -31,24 +31,24 @@ export class EmailClient {
 
   async connect(): Promise<void> {
     if (this.isConnected) {
-      debugLog('IMAP-Verbindung bereits vorhanden');
+      debugLog('IMAP connection already exists');
       return;
     }
     
-    debugLog('Verbinde mit IMAP-Server...');
+    debugLog('Connecting to IMAP server...');
     return new Promise((resolve, reject) => {
       this.imap.once('ready', () => {
-        debugLog('IMAP-Verbindung erfolgreich hergestellt');
+        debugLog('IMAP connection established successfully');
         this.isConnected = true;
         resolve();
       });
       this.imap.once('error', (err: Error) => {
-        debugLog('IMAP-Verbindungsfehler', err);
+        debugLog('IMAP connection error', err);
         this.isConnected = false;
         reject(err);
       });
       this.imap.once('end', () => {
-        debugLog('IMAP-Verbindung beendet');
+        debugLog('IMAP connection ended');
         this.isConnected = false;
       });
       this.imap.connect();
@@ -57,14 +57,14 @@ export class EmailClient {
 
   async disconnect(): Promise<void> {
     if (!this.isConnected) {
-      debugLog('IMAP-Verbindung bereits getrennt');
+      debugLog('IMAP connection already disconnected');
       return;
     }
     
-    debugLog('Trenne IMAP-Verbindung...');
+    debugLog('Disconnecting IMAP connection...');
     return new Promise((resolve) => {
       this.imap.once('end', () => {
-        debugLog('IMAP-Verbindung getrennt');
+        debugLog('IMAP connection disconnected');
         this.isConnected = false;
         resolve();
       });
@@ -137,14 +137,14 @@ export class EmailClient {
           criteria.push(params.flagged ? 'FLAGGED' : 'UNFLAGGED');
         }
 
-        // Wenn keine Kriterien angegeben, suche alle E-Mails
+        // If no criteria specified, search all emails
         const searchCriteria = criteria.length > 0 ? criteria : ['ALL'];
         
         this.imap.search(searchCriteria, (err: Error | null, results?: number[]) => {
           if (err) return reject(err);
           if (!results || results.length === 0) return resolve([]);
 
-          // Begrenze Ergebnisse
+          // Limit results
           const limitedResults = results.slice(0, params.limit);
           
           const fetch = this.imap.fetch(limitedResults, {
@@ -194,7 +194,7 @@ export class EmailClient {
                   };
                   emails.push(email);
                 } catch (parseErr) {
-                  console.error('Fehler beim Parsen der E-Mail:', parseErr);
+                  console.error('Error parsing email:', parseErr);
                 }
               });
             });
@@ -267,7 +267,7 @@ export class EmailClient {
       this.imap.openBox(folder, false, (err: Error | null) => {
         if (err) return reject(err);
 
-        // Verwende UID-Range für effiziente Batch-Operation
+        // Use UID range for efficient batch operation
         this.imap.addFlags(uids, '\\Deleted', (err: Error | null) => {
           if (err) return reject(err);
           
@@ -283,16 +283,16 @@ export class EmailClient {
   async getEmailStats(): Promise<EmailStats> {
     return new Promise(async (resolve, reject) => {
       try {
-        debugLog('Lade E-Mail-Statistiken (optimiert)...');
+        debugLog('Loading email statistics (optimized)...');
         
-        // Hole nur wichtige Ordner (INBOX, Sent, etc.)
+        // Get only important folders (INBOX, Sent, etc.)
         const folders = await this.getFolders();
         const importantFolders = folders.filter(f => 
           f.name.toLowerCase().includes('inbox') ||
           f.name.toLowerCase().includes('sent') ||
           f.name.toLowerCase().includes('draft') ||
           f.name.toLowerCase().includes('trash')
-        ).slice(0, 5); // Maximal 5 Ordner
+        ).slice(0, 5); // Maximum 5 folders
         
         const stats: EmailStats = {
           totalEmails: 0,
@@ -306,13 +306,13 @@ export class EmailClient {
           averageEmailsPerDay: 0,
         };
 
-        // Analysiere nur wichtige Ordner
+        // Analyze only important folders
         for (const folder of importantFolders) {
           try {
             await new Promise<void>((resolveFolder) => {
               this.imap.openBox(folder.path, true, (err: Error | null, box: any) => {
                 if (err) {
-                  debugLog(`Überspringe Ordner ${folder.path}`, err);
+                  debugLog(`Skipping folder ${folder.path}`, err);
                   resolveFolder();
                   return;
                 }
@@ -334,19 +334,19 @@ export class EmailClient {
               });
             });
           } catch (folderErr) {
-            debugLog(`Fehler bei Ordner ${folder.path}`, folderErr);
+            debugLog(`Error with folder ${folder.path}`, folderErr);
             continue;
           }
         }
 
-        debugLog('E-Mail-Statistiken erfolgreich geladen (optimiert)', {
+        debugLog('Email statistics successfully loaded (optimized)', {
           totalEmails: stats.totalEmails,
           folders: stats.folders.length
         });
 
         resolve(stats);
       } catch (error) {
-        debugLog('Fehler beim Laden der E-Mail-Statistiken', error);
+        debugLog('Error loading email statistics', error);
         reject(error);
       }
     });

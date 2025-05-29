@@ -3,18 +3,18 @@ import { z } from 'zod';
 import { join, dirname } from 'path';
 import { fileURLToPath } from 'url';
 
-// Bestimme den Projektordner
+// Determine project directory
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 const projectRoot = join(__dirname, '../..');
 
-// Lade .env-Datei
+// Load .env file
 dotenv.config({ path: join(projectRoot, '.env') });
 
-// Schema für Umgebungsvariablen-Validierung
+// Schema for environment variable validation
 const EnvSchema = z.object({
-  EMAIL_ADDRESS: z.string().email('Gültige E-Mail-Adresse erforderlich'),
-  EMAIL_PASSWORD: z.string().min(1, 'E-Mail-Passwort erforderlich'),
+  EMAIL_ADDRESS: z.string().email('Valid email address required'),
+  EMAIL_PASSWORD: z.string().min(1, 'Email password required'),
   IMAP_HOST: z.string().default('secureimap.t-online.de'),
   IMAP_PORT: z.string().transform(val => parseInt(val)).pipe(z.number().positive()).default('993'),
   IMAP_TLS: z.string().transform(val => val.toLowerCase() === 'true').default('true'),
@@ -25,7 +25,7 @@ const EnvSchema = z.object({
   DEBUG: z.string().transform(val => val.toLowerCase() === 'true').default('false'),
 });
 
-// Validiere und parse Umgebungsvariablen
+// Validate and parse environment variables
 function loadConfig() {
   try {
     const env = EnvSchema.parse(process.env);
@@ -48,17 +48,17 @@ function loadConfig() {
     };
   } catch (error) {
     if (error instanceof z.ZodError) {
-      console.error('❌ Konfigurationsfehler in .env-Datei:');
+      console.error('❌ Configuration error in .env file:');
       error.errors.forEach(err => {
         console.error(`  - ${err.path.join('.')}: ${err.message}`);
       });
       
-      // Hilfreiche Tipps ausgeben
-      console.error('\n💡 Tipps:');
-      console.error('  - Überprüfe deine .env-Datei im Projektverzeichnis');
-      console.error('  - Verwende .env.example als Vorlage');
-      console.error('  - Stelle sicher, dass EMAIL_ADDRESS und EMAIL_PASSWORD gesetzt sind');
-      console.error('  - Für t-online benötigst du ein App-Passwort (siehe docs/app-password-guide.md)');
+      // Show helpful tips
+      console.error('\n💡 Tips:');
+      console.error('  - Check your .env file in the project directory');
+      console.error('  - Use .env.example as a template');
+      console.error('  - Make sure EMAIL_ADDRESS and EMAIL_PASSWORD are set');
+      console.error('  - For t-online you need an app password (see docs/app-password-guide.md)');
       
       process.exit(1);
     }
@@ -66,10 +66,10 @@ function loadConfig() {
   }
 }
 
-// Lade und exportiere Konfiguration
+// Load and export configuration
 export const config = loadConfig();
 
-// Hilfsfunktion für Debug-Ausgaben
+// Helper function for debug output
 export function debugLog(message: string, data?: any) {
   if (config.server.debug) {
     console.error(`[DEBUG] ${message}`, data ? data : '');

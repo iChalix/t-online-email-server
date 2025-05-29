@@ -1,6 +1,6 @@
 import { z } from 'zod';
 
-// Schema für E-Mail-Nachrichten
+// Schema for email messages
 export const EmailMessageSchema = z.object({
   uid: z.number(),
   subject: z.string(),
@@ -13,7 +13,7 @@ export const EmailMessageSchema = z.object({
   flagged: z.boolean(),
 });
 
-// Schema für Ordner
+// Schema for folders
 export const EmailFolderSchema = z.object({
   name: z.string(),
   path: z.string(),
@@ -22,7 +22,7 @@ export const EmailFolderSchema = z.object({
   attributes: z.array(z.string()).optional(),
 });
 
-// Schema für Suchparameter
+// Schema for search parameters
 export const SearchParamsSchema = z.object({
   folder: z.string().default('INBOX'),
   from: z.string().optional(),
@@ -36,7 +36,7 @@ export const SearchParamsSchema = z.object({
   limit: z.number().default(50),
 });
 
-// Schema für E-Mail-Statistiken
+// Schema for email statistics
 export const EmailStatsSchema = z.object({
   totalEmails: z.number(),
   unreadEmails: z.number(),
