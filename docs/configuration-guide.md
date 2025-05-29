@@ -1,76 +1,76 @@
-# Umweltfreundliche .env-Konfiguration für t-online E-Mail MCP Server
+# Environment-friendly .env Configuration for t-online Email MCP Server
 
-## Übersicht
+## Overview
 
-Der MCP-Server nutzt **ausschließlich** die `.env`-Datei für alle Konfigurationseinstellungen. Dies bietet folgende Vorteile:
+The MCP server uses **exclusively** the `.env` file for all configuration settings. This offers the following advantages:
 
-- 🔒 **Sicherheit**: Zugangsdaten bleiben lokal und werden nicht über Umgebungsvariablen übertragen
-- 🎯 **Einfachheit**: Zentrale Konfiguration an einem Ort
-- ✅ **Validierung**: Automatische Überprüfung aller Einstellungen beim Start
-- 🚀 **Portabilität**: Einfache Übertragung zwischen Entwicklungs- und Produktionsumgebungen
+- 🔒 **Security**: Credentials remain local and are not transmitted via environment variables
+- 🎯 **Simplicity**: Central configuration in one place
+- ✅ **Validation**: Automatic verification of all settings at startup
+- 🚀 **Portability**: Easy transfer between development and production environments
 
-## Konfigurationsdatei (.env)
+## Configuration File (.env)
 
 ```bash
 # ====================================
-# E-MAIL ZUGANGSDATEN (ERFORDERLICH)
+# EMAIL CREDENTIALS (REQUIRED)
 # ====================================
 
-# Deine t-online E-Mail-Adresse
-EMAIL_ADDRESS=deine-email@t-online.de
+# Your t-online email address
+EMAIL_ADDRESS=your-email@t-online.de
 
-# App-Passwort (NICHT das normale Passwort!)
-# Erstelle ein App-Passwort im t-online Kundencenter
-EMAIL_PASSWORD=dein-app-passwort
+# App password (NOT your normal password!)
+# Create an app password in the t-online customer center
+EMAIL_PASSWORD=your-app-password
 
 # ====================================
-# IMAP EINSTELLUNGEN (OPTIONAL)
+# IMAP SETTINGS (OPTIONAL)
 # ====================================
-# Standardwerte sind für t-online optimiert
+# Default values are optimized for t-online
 
-# IMAP-Server für t-online
+# IMAP server for t-online
 IMAP_HOST=secureimap.t-online.de
 
-# IMAP-Port (993 für TLS)
+# IMAP port (993 for TLS)
 IMAP_PORT=993
 
-# TLS-Verschlüsselung aktivieren
+# Enable TLS encryption
 IMAP_TLS=true
 
 # ====================================
-# SMTP EINSTELLUNGEN (OPTIONAL)
+# SMTP SETTINGS (OPTIONAL)
 # ====================================
-# Für zukünftige E-Mail-Versendung
+# For future email sending
 
-# SMTP-Server für t-online
+# SMTP server for t-online
 SMTP_HOST=securesmtp.t-online.de
 
-# SMTP-Port (587 für STARTTLS)
+# SMTP port (587 for STARTTLS)
 SMTP_PORT=587
 
-# TLS-Verschlüsselung für SMTP
+# TLS encryption for SMTP
 SMTP_TLS=true
 
 # ====================================
-# SERVER EINSTELLUNGEN (OPTIONAL)
+# SERVER SETTINGS (OPTIONAL)
 # ====================================
 
-# Name des MCP-Servers
+# Name of the MCP server
 MCP_SERVER_NAME=t-online-email-server
 
-# Debug-Modus aktivieren (true/false)
+# Enable debug mode (true/false)
 DEBUG=false
 ```
 
-## Konfigurationsvalidierung
+## Configuration Validation
 
-Der Server validiert alle Einstellungen automatisch beim Start:
+The server automatically validates all settings at startup:
 
-### Erforderliche Felder
-- ✅ `EMAIL_ADDRESS` - Muss gültige E-Mail-Adresse sein
-- ✅ `EMAIL_PASSWORD` - Darf nicht leer sein
+### Required Fields
+- ✅ `EMAIL_ADDRESS` - Must be a valid email address
+- ✅ `EMAIL_PASSWORD` - Cannot be empty
 
-### Automatische Defaults
+### Automatic Defaults
 - 🔧 `IMAP_HOST` → `secureimap.t-online.de`
 - 🔧 `IMAP_PORT` → `993`
 - 🔧 `IMAP_TLS` → `true`
@@ -80,80 +80,80 @@ Der Server validiert alle Einstellungen automatisch beim Start:
 - 🔧 `MCP_SERVER_NAME` → `t-online-email-server`
 - 🔧 `DEBUG` → `false`
 
-### Datentyp-Konvertierung
-- 🔄 Port-Nummern werden zu Zahlen konvertiert
-- 🔄 Boolean-Werte (`true`/`false`) werden korrekt geparst
-- 🔄 Strings werden getrimmt
+### Data Type Conversion
+- 🔄 Port numbers are converted to numbers
+- 🔄 Boolean values (`true`/`false`) are parsed correctly
+- 🔄 Strings are trimmed
 
-## Fehlerbehandlung
+## Error Handling
 
-Bei fehlerhafter Konfiguration erhältst du hilfreiche Fehlermeldungen:
+With faulty configuration, you get helpful error messages:
 
 ```bash
-❌ Konfigurationsfehler in .env-Datei:
-  - EMAIL_ADDRESS: Gültige E-Mail-Adresse erforderlich
-  - EMAIL_PASSWORD: E-Mail-Passwort erforderlich
+❌ Configuration error in .env file:
+  - EMAIL_ADDRESS: Valid email address required
+  - EMAIL_PASSWORD: Email password required
 
-💡 Tipps:
-  - Überprüfe deine .env-Datei im Projektverzeichnis
-  - Verwende .env.example als Vorlage
-  - Stelle sicher, dass EMAIL_ADDRESS und EMAIL_PASSWORD gesetzt sind
-  - Für t-online benötigst du ein App-Passwort (siehe docs/app-password-guide.md)
+💡 Tips:
+  - Check your .env file in the project directory
+  - Use .env.example as a template
+  - Make sure EMAIL_ADDRESS and EMAIL_PASSWORD are set
+  - For t-online you need an app password (see docs/app-password-guide.md)
 ```
 
-## Sicherheitsaspekte
+## Security Aspects
 
-### ✅ Was gut ist:
-- `.env`-Datei ist in `.gitignore` enthalten
-- Passwörter werden lokal gespeichert
-- Automatische TLS-Verschlüsselung
-- Validierung verhindert unsichere Konfigurationen
+### ✅ What's good:
+- `.env` file is included in `.gitignore`
+- Passwords are stored locally
+- Automatic TLS encryption
+- Validation prevents insecure configurations
 
-### ⚠️ Wichtige Hinweise:
-- Verwende **niemals** dein Haupt-Passwort
-- Erstelle ein **App-Passwort** im t-online Kundencenter
-- Teile die `.env`-Datei nicht über Git oder andere Versionskontrollsysteme
-- Sichere Backups der `.env`-Datei an einem sicheren Ort
+### ⚠️ Important Notes:
+- **Never** use your main password
+- Create an **app password** in the t-online customer center
+- Don't share the `.env` file via Git or other version control systems
+- Keep secure backups of the `.env` file in a safe place
 
-## Debug-Konfiguration
+## Debug Configuration
 
-Für Entwicklung und Fehlerbehebung:
+For development and troubleshooting:
 
 ```bash
-# Debug-Modus aktivieren
+# Enable debug mode
 DEBUG=true
 ```
 
-Mit aktiviertem Debug-Modus siehst du:
-- 🔍 Detaillierte Verbindungsinformationen
-- 📡 IMAP-Konfigurationsdetails
-- 🔄 Tool-Aufrufe und Parameter
-- ❌ Erweiterte Fehlerinformationen
+With debug mode enabled, you see:
+- 🔍 Detailed connection information
+- 📡 IMAP configuration details
+- 🔄 Tool calls and parameters
+- ❌ Extended error information
 
-## Umgebungsspezifische Konfiguration
+## Environment-specific Configuration
 
-### Entwicklung
+### Development
 ```bash
 # .env.development
 DEBUG=true
 MCP_SERVER_NAME=t-online-email-dev
 ```
 
-### Produktion
+### Production
 ```bash
 # .env.production
 DEBUG=false
 MCP_SERVER_NAME=t-online-email-server
 ```
 
-## Andere E-Mail-Provider
+## Other Email Providers
 
-Der Server kann auch für andere Provider konfiguriert werden:
+The server can also be configured for other providers:
 
 ### Gmail
 ```bash
-EMAIL_ADDRESS=deine-email@gmail.com
-EMAIL_PASSWORD=app-passwort
+EMAIL_ADDRESS=your-email@gmail.com
+EMAIL_PASSWORD=app-password
 IMAP_HOST=imap.gmail.com
 IMAP_PORT=993
 SMTP_HOST=smtp.gmail.com
@@ -162,53 +162,53 @@ SMTP_PORT=587
 
 ### Outlook/Hotmail
 ```bash
-EMAIL_ADDRESS=deine-email@outlook.com
-EMAIL_PASSWORD=app-passwort
+EMAIL_ADDRESS=your-email@outlook.com
+EMAIL_PASSWORD=app-password
 IMAP_HOST=outlook.office365.com
 IMAP_PORT=993
 SMTP_HOST=smtp-mail.outlook.com
 SMTP_PORT=587
 ```
 
-## Backup und Migration
+## Backup and Migration
 
-### Konfiguration sichern
+### Backup Configuration
 ```bash
-# Sichere deine .env-Datei
+# Backup your .env file
 cp .env .env.backup.$(date +%Y%m%d)
 ```
 
-### Migration zwischen Systemen
+### Migration Between Systems
 ```bash
-# Übertrage nur die .env-Datei
+# Transfer only the .env file
 scp .env user@remote-server:/path/to/project/
 ```
 
 ## Troubleshooting
 
-### Problem: Server startet nicht
+### Problem: Server doesn't start
 ```bash
-# Überprüfe .env-Datei Existenz
+# Check .env file existence
 ls -la .env
 
-# Teste Konfiguration
+# Test configuration
 npm run dev
 ```
 
-### Problem: Authentifizierungsfehler
+### Problem: Authentication error
 ```bash
-# Aktiviere Debug-Modus
+# Enable debug mode
 echo "DEBUG=true" >> .env
 npm run dev
 ```
 
-### Problem: Ungültige Konfiguration
+### Problem: Invalid configuration
 ```bash
-# Verwende die Vorlage neu
+# Use the template again
 cp .env.example .env
-# Bearbeite mit deinen Daten
+# Edit with your data
 ```
 
 ---
 
-**💡 Tipp**: Die `.env`-Datei ist der einzige Ort, wo du Konfigurationen vornehmen musst. Claude Desktop benötigt keine zusätzlichen Umgebungsvariablen!
+**💡 Tip**: The `.env` file is the only place where you need to make configurations. Claude Desktop requires no additional environment variables!

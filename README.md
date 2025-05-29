@@ -1,97 +1,156 @@
-# T-Online E-Mail MCP Server
+# T-Online Email MCP Server
 
-Ein Model Context Protocol (MCP) Server für die Verwaltung von t-online E-Mails.
+A Model Context Protocol (MCP) server for managing t-online emails.
 
 ## Features
 
-- 📧 **E-Mail-Suche**: Durchsuche E-Mails nach Absender, Empfänger, Betreff, Inhalt und Datum
-- 📁 **Ordner-Verwaltung**: Erstelle, lösche und verwalte E-Mail-Ordner
-- ↔️ **E-Mail-Verschiebung**: Verschiebe E-Mails zwischen Ordnern
-- 👁️ **Status-Verwaltung**: Markiere E-Mails als gelesen/ungelesen
-- 🗑️ **E-Mail-Löschung**: Lösche E-Mails permanent
-- 🔒 **Sichere Verbindung**: Nutzt sichere IMAP/SMTP-Verbindungen zu t-online
-- ⚙️ **Konfiguration über .env**: Alle Einstellungen werden aus der .env-Datei geladen
+- 📧 **Email Search**: Search emails by sender, recipient, subject, content, and date
+- 📁 **Folder Management**: Create, delete, and manage email folders
+- ↔️ **Email Movement**: Move emails between folders
+- 👁️ **Status Management**: Mark emails as read/unread
+- 🗑️ **Email Deletion**: Delete emails permanently
+- 🔒 **Secure Connection**: Uses secure IMAP/SMTP connections to t-online
+- ⚙️ **Configuration via .env**: All settings are loaded from the .env file
 
 ## Installation
 
-1. **Abhängigkeiten installieren:**
+1. **Install dependencies:**
    ```bash
    npm install
    ```
 
-2. **Konfiguration erstellen:**
+2. **Create configuration:**
    ```bash
    cp .env.example .env
    ```
    
-   Bearbeite die `.env`-Datei mit deinen t-online Zugangsdaten:
+   Edit the `.env` file with your t-online credentials:
    ```
-   EMAIL_ADDRESS=deine-email@t-online.de
-   EMAIL_PASSWORD=dein-app-passwort
+   EMAIL_ADDRESS=your-email@t-online.de
+   EMAIL_PASSWORD=your-app-password
    ```
    
-   **Wichtig:** Der Server nutzt ausschließlich die `.env`-Datei für die Konfiguration. Alle Einstellungen müssen dort gesetzt werden.
+   **Important:** The server uses exclusively the `.env` file for configuration. All settings must be set there.
 
-3. **Projekt kompilieren:**
+3. **Compile project:**
    ```bash
    npm run build
    ```
 
-## Konfiguration (.env-Datei)
+## Configuration (.env file)
 
-Der MCP-Server verwendet **ausschließlich** die `.env`-Datei für alle Konfigurationseinstellungen:
+The MCP server uses **exclusively** the `.env` file for all configuration settings:
 
 ```bash
-# E-Mail-Zugangsdaten (ERFORDERLICH)
-EMAIL_ADDRESS=deine-email@t-online.de
-EMAIL_PASSWORD=dein-app-passwort
+# Email credentials (REQUIRED)
+EMAIL_ADDRESS=your-email@t-online.de
+EMAIL_PASSWORD=your-app-password
 
-# IMAP-Einstellungen (optional, Standardwerte für t-online)
+# IMAP settings (optional, defaults for t-online)
 IMAP_HOST=secureimap.t-online.de
 IMAP_PORT=993
 IMAP_TLS=true
 
-# SMTP-Einstellungen (optional, für zukünftige Features)
+# SMTP settings (optional, for future features)
 SMTP_HOST=securesmtp.t-online.de
 SMTP_PORT=587
 SMTP_TLS=true
 
-# Server-Einstellungen (optional)
+# Server settings (optional)
 MCP_SERVER_NAME=t-online-email-server
 DEBUG=false
 ```
 
-**Alle Konfiguration erfolgt über die .env-Datei** - keine Umgebungsvariablen in der Shell oder Claude Desktop-Konfiguration erforderlich!tige ID der E-Mail
-- `folder` (string, optional): Ordner der E-Mail (Standard: "INBOX")
+**All configuration is done via the .env file** - no environment variables in shell or Claude Desktop configuration required!
+
+## MCP Tools
+
+### `search_emails`
+Search emails by various criteria.
+
+**Parameters:**
+- `folder` (string, optional): Email folder to search (default: "INBOX")
+- `from` (string, optional): Sender email address
+- `to` (string, optional): Recipient email address
+- `subject` (string, optional): Subject search term
+- `body` (string, optional): Body content search term
+- `since` (string, optional): Date since (YYYY-MM-DD format)
+- `before` (string, optional): Date before (YYYY-MM-DD format)
+- `seen` (boolean, optional): Read status (true = read, false = unread)
+- `limit` (number, optional): Maximum number of results (default: 50)
+
+### `get_email_stats`
+Show detailed statistics about the email account.
+
+**Returns:** Comprehensive overview of total emails, unread count, and folder statistics.
+
+### `get_folders`
+List all available email folders.
+
+**Returns:** Array of all folders with their paths and attributes.
+
+### `create_folder`
+Create a new email folder.
+
+**Parameters:**
+- `folderName` (string, required): Name of the folder to create (can include hierarchy with "/")
+
+### `delete_folder`
+Delete an email folder.
+
+**Parameters:**
+- `folderName` (string, required): Name of the folder to delete
+
+### `move_email`
+Move an email between folders.
+
+**Parameters:**
+- `uid` (number, required): Unique ID of the email
+- `fromFolder` (string, required): Source folder name
+- `toFolder` (string, required): Destination folder name
+
+### `mark_as_read`
+Mark an email as read.
+
+**Parameters:**
+- `uid` (number, required): Unique ID of the email
+- `folder` (string, optional): Email folder (default: "INBOX")
+
+### `mark_as_unread`
+Mark an email as unread.
+
+**Parameters:**
+- `uid` (number, required): Unique ID of the email
+- `folder` (string, optional): Email folder (default: "INBOX")
 
 ### `delete_email`
-Lösche eine E-Mail permanent.
+Delete an email permanently.
 
-**Parameter:**
-- `uid` (number, erforderlich): Eindeutige ID der E-Mail
-- `folder` (string, optional): Ordner der E-Mail (Standard: "INBOX")
+**Parameters:**
+- `uid` (number, required): Unique ID of the email
+- `folder` (string, optional): Email folder (default: "INBOX")
 
-## Verwendung
+## Usage
 
-### Entwicklung
+### Development
 ```bash
 npm run dev
 ```
 
-### Produktion
+### Production
 ```bash
 npm start
 ```
 
-### Debug-Modus aktivieren
+### Enable debug mode
 ```bash
-# In .env-Datei:
+# In .env file:
 DEBUG=true
 ```
 
-### Mit Claude Desktop konfigurieren
+### Configure with Claude Desktop
 
-Füge folgende Konfiguration zu deiner Claude Desktop MCP-Einstellungen hinzu:
+Add the following configuration to your Claude Desktop MCP settings:
 
 ```json
 {
@@ -104,19 +163,19 @@ Füge folgende Konfiguration zu deiner Claude Desktop MCP-Einstellungen hinzu:
 }
 ```
 
-**Wichtig:** Die gesamte Konfiguration erfolgt über die `.env`-Datei. Claude Desktop benötigt keine Umgebungsvariablen!
+**Important:** All configuration is done via the `.env` file. Claude Desktop requires no environment variables!
 
-## Beispiele
+## Examples
 
-### E-Mails von einem bestimmten Absender suchen
+### Search emails from a specific sender
 ```javascript
 await searchEmails({
-  from: "beispiel@domain.de",
+  from: "example@domain.com",
   limit: 10
 });
 ```
 
-### Neue E-Mails (ungelesen) anzeigen
+### Show new emails (unread)
 ```javascript
 await searchEmails({
   seen: false,
@@ -124,122 +183,122 @@ await searchEmails({
 });
 ```
 
-### E-Mail in einen anderen Ordner verschieben
+### Move email to another folder
 ```javascript
 await moveEmail({
   uid: 12345,
   fromFolder: "INBOX",
-  toFolder: "Archiv"
+  toFolder: "Archive"
 });
 ```
 
-### Neuen Ordner erstellen
+### Create new folder
 ```javascript
 await createFolder({
-  folderName: "Projekte/MCP"
+  folderName: "Projects/MCP"
 });
 ```
 
-## Konfigurationsvalidierung
+## Configuration Validation
 
-Der Server validiert automatisch alle `.env`-Einstellungen beim Start:
+The server automatically validates all `.env` settings at startup:
 
-- ✅ **E-Mail-Format** wird überprüft
-- ✅ **Erforderliche Felder** werden kontrolliert
-- ✅ **Port-Nummern** werden validiert
-- ✅ **Boolean-Werte** werden korrekt geparst
-- ❌ **Fehlerhafte Konfiguration** stoppt den Server mit hilfreichen Tipps
+- ✅ **Email format** is checked
+- ✅ **Required fields** are controlled
+- ✅ **Port numbers** are validated
+- ✅ **Boolean values** are parsed correctly
+- ❌ **Faulty configuration** stops the server with helpful tips
 
-## Sicherheit
+## Security
 
-- ✅ Verwende immer App-Passwörter, niemals dein Haupt-Passwort
-- ✅ Speichere Zugangsdaten sicher in der `.env`-Datei
-- ✅ Nutze TLS-verschlüsselte Verbindungen (standardmäßig aktiviert)
-- ✅ Teste zunächst mit einem separaten Test-Account
-- ✅ `.env`-Datei ist in `.gitignore` enthalten
+- ✅ Always use app passwords, never your main password
+- ✅ Store credentials securely in the `.env` file
+- ✅ Use TLS-encrypted connections (enabled by default)
+- ✅ Test first with a separate test account
+- ✅ `.env` file is included in `.gitignore`
 
-## Fehlerbehebung
+## Troubleshooting
 
-### Konfigurationsfehler
+### Configuration errors
 ```
-❌ Konfigurationsfehler in .env-Datei:
-  - EMAIL_ADDRESS: Gültige E-Mail-Adresse erforderlich
+❌ Configuration error in .env file:
+  - EMAIL_ADDRESS: Valid email address required
 ```
 
-**Lösung:**
-- Überprüfe deine `.env`-Datei im Projektverzeichnis
-- Verwende `.env.example` als Vorlage
-- Stelle sicher, dass EMAIL_ADDRESS und EMAIL_PASSWORD gesetzt sind
+**Solution:**
+- Check your `.env` file in the project directory
+- Use `.env.example` as a template
+- Make sure EMAIL_ADDRESS and EMAIL_PASSWORD are set
 
-### Verbindungsfehler
-- Überprüfe deine t-online Zugangsdaten in der `.env`-Datei
-- Stelle sicher, dass IMAP in deinem t-online Account aktiviert ist
-- Verwende ein gültiges App-Passwort
+### Connection errors
+- Check your t-online credentials in the `.env` file
+- Make sure IMAP is enabled in your t-online account
+- Use a valid app password
 
-### IMAP-Einstellungen für t-online
+### IMAP settings for t-online
 - **IMAP Server**: secureimap.t-online.de
 - **Port**: 993
-- **Verschlüsselung**: TLS/SSL
+- **Encryption**: TLS/SSL
 - **SMTP Server**: securesmtp.t-online.de
 - **Port**: 587
-- **Verschlüsselung**: STARTTLS
+- **Encryption**: STARTTLS
 
-## Entwicklung
+## Development
 
-### Projekt-Struktur
+### Project Structure
 ```
 src/
-├── index.ts              # Haupt-MCP-Server
-├── email-client.ts       # IMAP/E-Mail-Client
-├── types.ts              # TypeScript-Typen und Schemas
+├── index.ts              # Main MCP server
+├── email-client.ts       # IMAP/Email client
+├── types.ts              # TypeScript types and schemas
 └── config/
-    └── index.ts          # Konfigurationsmanagement und Validierung
+    └── index.ts          # Configuration management and validation
 ```
 
-### Erweiterungen
+### Extensions
 
-Du kannst den Server einfach erweitern:
+You can easily extend the server:
 
-1. **Neue Tools hinzufügen**: Erweitere die `setupToolHandlers()` Methode
-2. **Zusätzliche E-Mail-Provider**: Anpassung der IMAP-Konfiguration in `config/index.ts`
-3. **Erweiterte Suchfunktionen**: Neue Suchkriterien in `SearchParamsSchema`
-4. **E-Mail-Versendung**: Integration von nodemailer für SMTP
+1. **Add new tools**: Extend the `setupToolHandlers()` method
+2. **Additional email providers**: Adapt IMAP configuration in `config/index.ts`
+3. **Extended search functions**: New search criteria in `SearchParamsSchema`
+4. **Email sending**: Integration of nodemailer for SMTP
 
-### Konfiguration erweitern
+### Extend configuration
 
-Neue Konfigurationsoptionen hinzufügen:
+Add new configuration options:
 
-1. **In `.env.example`** neue Variable hinzufügen
-2. **In `config/index.ts`** Schema erweitern:
+1. **In `.env.example`** add new variable
+2. **In `config/index.ts`** extend schema:
    ```typescript
    const EnvSchema = z.object({
-     // ... bestehende Felder
+     // ... existing fields
      NEW_SETTING: z.string().default('default-value'),
    });
    ```
-3. **In `config/index.ts`** Export erweitern
+3. **In `config/index.ts`** extend export
 
 ### Tests
 ```bash
-# Unit-Tests ausführen (wenn implementiert)
+# Run unit tests (if implemented)
 npm test
 
 # Linting
 npm run lint
 ```
 
-## Lizenz
+## License
 
-MIT License - siehe LICENSE-Datei für Details.
+MIT License - see LICENSE file for details.
 
 ## Support
 
-Bei Problemen oder Fragen:
-1. Überprüfe die `.env`-Datei auf Vollständigkeit
-2. Aktiviere Debug-Modus mit `DEBUG=true`
-3. Kontrolliere die Server-Logs für detaillierte Fehlermeldungen
-4. Siehe `docs/` für erweiterte Anleitungen
+For problems or questions:
+1. Check the `.env` file for completeness
+2. Enable debug mode with `DEBUG=true`
+3. Check server logs for detailed error messages
+4. See `docs/` for extended guides
 
 ---
 
-**Hinweis**: Dieser MCP-Server nutzt die `.env`-Datei für die komplette Konfiguration. Für andere E-Mail-Provider können Anpassungen der IMAP/SMTP-Einstellungen in der `.env`-Datei erforderlich sein.
+**Note**: This MCP server uses the `.env` file for complete configuration. For other email providers, adjustments to IMAP/SMTP settings in the `.env` file may be required.

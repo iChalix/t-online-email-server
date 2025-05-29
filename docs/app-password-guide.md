@@ -1,71 +1,71 @@
-# T-Online App-Passwort Anleitung
+# T-Online App Password Guide
 
-## Was ist ein App-Passwort?
+## What is an App Password?
 
-Ein App-Passwort ist ein spezielles Passwort, das du für Anwendungen wie E-Mail-Clients verwendest, anstatt dein Haupt-Passwort zu nutzen. Dies erhöht die Sicherheit deines Accounts.
+An app password is a special password that you use for applications like email clients instead of using your main password. This increases the security of your account.
 
-## Schritt-für-Schritt Anleitung
+## Step-by-Step Guide
 
-### 1. T-Online Kundencenter aufrufen
-- Gehe zu [kundencenter.t-online.de](https://kundencenter.t-online.de)
-- Logge dich mit deinen normalen Zugangsdaten ein
+### 1. Access T-Online Customer Center
+- Go to [kundencenter.t-online.de](https://kundencenter.t-online.de)
+- Log in with your normal credentials
 
-### 2. Sicherheitseinstellungen öffnen
-- Klicke auf "Mein Account" oder "Einstellungen"
-- Navigiere zu "Sicherheit" oder "Passwort & Sicherheit"
+### 2. Open Security Settings
+- Click on "Mein Account" (My Account) or "Einstellungen" (Settings)
+- Navigate to "Sicherheit" (Security) or "Passwort & Sicherheit" (Password & Security)
 
-### 3. App-Passwort erstellen
-- Suche nach "App-Passwörter" oder "Anwendungspasswörter"
-- Klicke auf "Neues App-Passwort erstellen"
-- Wähle "E-Mail-Client" als Anwendungstyp
-- Vergib einen Namen wie "MCP Email Server"
+### 3. Create App Password
+- Look for "App-Passwörter" (App Passwords) or "Anwendungspasswörter" (Application Passwords)
+- Click on "Neues App-Passwort erstellen" (Create New App Password)
+- Select "E-Mail-Client" as application type
+- Give it a name like "MCP Email Server"
 
-### 4. App-Passwort notieren
-- Das generierte Passwort wird nur einmal angezeigt
-- Kopiere es sofort und speichere es sicher
-- Dieses Passwort verwendest du in der `.env`-Datei
+### 4. Note the App Password
+- The generated password is displayed only once
+- Copy it immediately and store it securely
+- Use this password in the `.env` file
 
-### 5. IMAP aktivieren (falls nicht aktiv)
-- Stelle sicher, dass IMAP in deinen E-Mail-Einstellungen aktiviert ist
-- Dies findest du meist unter "E-Mail-Einstellungen" > "IMAP/POP3"
+### 5. Enable IMAP (if not active)
+- Make sure IMAP is enabled in your email settings
+- This can usually be found under "E-Mail-Einstellungen" (Email Settings) > "IMAP/POP3"
 
-## Wichtige Hinweise
+## Important Notes
 
-⚠️ **Sicherheit:**
-- Verwende niemals dein Haupt-Passwort für E-Mail-Clients
-- App-Passwörter können jederzeit widerrufen werden
-- Jede Anwendung sollte ein eigenes App-Passwort haben
+⚠️ **Security:**
+- Never use your main password for email clients
+- App passwords can be revoked at any time
+- Each application should have its own app password
 
-✅ **Vorteile:**
-- Höhere Sicherheit
-- Einfache Verwaltung
-- Können einzeln deaktiviert werden
+✅ **Benefits:**
+- Higher security
+- Easy management
+- Can be disabled individually
 
-## Fehlerbehebung
+## Troubleshooting
 
-### Problem: "Authentifizierung fehlgeschlagen"
-- Überprüfe, ob du das App-Passwort (nicht das Haupt-Passwort) verwendest
-- Stelle sicher, dass IMAP aktiviert ist
-- Prüfe die Server-Einstellungen
+### Problem: "Authentication failed"
+- Check that you're using the app password (not the main password)
+- Make sure IMAP is enabled
+- Verify server settings
 
-### Problem: "Verbindung abgelehnt"
-- Überprüfe die IMAP-Server-Adresse: `secureimap.t-online.de`
-- Port sollte 993 sein
-- TLS/SSL sollte aktiviert sein
+### Problem: "Connection refused"
+- Check the IMAP server address: `secureimap.t-online.de`
+- Port should be 993
+- TLS/SSL should be enabled
 
-### Problem: App-Passwort vergessen
-- Erstelle einfach ein neues App-Passwort
-- Lösche das alte in den Einstellungen
-- Aktualisiere die `.env`-Datei
+### Problem: App password forgotten
+- Simply create a new app password
+- Delete the old one in settings
+- Update the `.env` file
 
-## Alternative E-Mail-Provider
+## Alternative Email Providers
 
-Falls du einen anderen Provider verwendest, hier die gängigen Einstellungen:
+If you're using a different provider, here are common settings:
 
 ### Gmail
 - IMAP: `imap.gmail.com:993` (SSL)
 - SMTP: `smtp.gmail.com:587` (STARTTLS)
-- Benötigt App-Passwort bei aktivierter 2FA
+- Requires app password with 2FA enabled
 
 ### Outlook/Hotmail
 - IMAP: `outlook.office365.com:993` (SSL)
@@ -77,6 +77,6 @@ Falls du einen anderen Provider verwendest, hier die gängigen Einstellungen:
 
 ## Support
 
-Bei Problemen mit t-online spezifischen Einstellungen:
-- T-Online Kundensupport: 0800 33 01000
-- Online-Hilfe: [hilfe.t-online.de](https://hilfe.t-online.de)
+For problems with t-online specific settings:
+- T-Online Customer Support: 0800 33 01000
+- Online Help: [hilfe.t-online.de](https://hilfe.t-online.de)

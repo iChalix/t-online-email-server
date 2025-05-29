@@ -1,30 +1,30 @@
 # MCP Server Testing Guide
 
-## Lokale Tests
+## Local Tests
 
-### 1. Server starten
+### 1. Start Server
 ```bash
-# Entwicklungsmodus
+# Development mode
 npm run dev
 
-# Oder kompiliert
+# Or compiled
 npm run build && npm start
 ```
 
-### 2. Verbindung testen
-Der Server sollte folgende Ausgabe zeigen:
+### 2. Test Connection
+The server should show the following output:
 ```
-T-Online E-Mail MCP Server gestartet
+T-Online Email MCP Server started
 ```
 
-### 3. Tools testen
+### 3. Test Tools
 
-#### E-Mail-Ordner auflisten
+#### List Email Folders
 ```bash
 echo '{"method": "tools/list"}' | node dist/index.js
 ```
 
-#### E-Mails durchsuchen
+#### Search Emails
 ```bash
 echo '{
   "method": "tools/call",
@@ -38,61 +38,61 @@ echo '{
 }' | node dist/index.js
 ```
 
-## Integration mit Claude Desktop
+## Integration with Claude Desktop
 
-### 1. Konfiguration hinzufügen
-Füge die Konfiguration aus `claude-desktop-config.json` zu deiner Claude Desktop MCP-Konfiguration hinzu.
+### 1. Add Configuration
+Add the configuration from `claude-desktop-config.json` to your Claude Desktop MCP configuration.
 
-### 2. Claude Desktop neustarten
-Nach der Konfiguration muss Claude Desktop neugestartet werden.
+### 2. Restart Claude Desktop
+After configuration, Claude Desktop must be restarted.
 
-### 3. Funktionalität testen
-In Claude Desktop solltest du jetzt folgende Befehle verwenden können:
+### 3. Test Functionality
+In Claude Desktop you should now be able to use the following commands:
 
 ```
-Zeige mir meine neuesten E-Mails
-Suche nach E-Mails von beispiel@domain.de
-Erstelle einen neuen Ordner namens "Projekte"
-Verschiebe E-Mail mit UID 12345 in den Archiv-Ordner
+Show me my latest emails
+Search for emails from example@domain.com
+Create a new folder called "Projects"
+Move email with UID 12345 to the Archive folder
 ```
 
 ## Debugging
 
-### Server-Logs
+### Server Logs
 ```bash
-# Mit Debug-Ausgabe
+# With debug output
 DEBUG=true npm run dev
 ```
 
-### Häufige Probleme
+### Common Problems
 
-#### 1. Authentifizierungsfehler
+#### 1. Authentication Error
 ```
-Fehler: Invalid credentials
-```
-
-**Lösung:**
-- Überprüfe E-Mail-Adresse und App-Passwort in `.env`
-- Stelle sicher, dass IMAP aktiviert ist
-- Verwende App-Passwort, nicht Haupt-Passwort
-
-#### 2. Verbindungsfehler
-```
-Fehler: Connection timeout
+Error: Invalid credentials
 ```
 
-**Lösung:**
-- Überprüfe Netzwerkverbindung
-- Prüfe Firewall-Einstellungen
-- Teste IMAP-Server-Erreichbarkeit: `telnet secureimap.t-online.de 993`
+**Solution:**
+- Check email address and app password in `.env`
+- Make sure IMAP is enabled
+- Use app password, not main password
 
-#### 3. SSL/TLS-Fehler
+#### 2. Connection Error
 ```
-Fehler: SSL handshake failed
+Error: Connection timeout
 ```
 
-**Lösung:**
-- In `email-client.ts` füge hinzu:
+**Solution:**
+- Check network connection
+- Check firewall settings
+- Test IMAP server reachability: `telnet secureimap.t-online.de 993`
+
+#### 3. SSL/TLS Error
+```
+Error: SSL handshake failed
+```
+
+**Solution:**
+- In `email-client.ts` add:
 ```typescript
 tlsOptions: {
   rejectUnauthorized: false,
@@ -102,22 +102,22 @@ tlsOptions: {
 
 ### Network Testing
 ```bash
-# IMAP-Server testen
+# Test IMAP server
 telnet secureimap.t-online.de 993
 
-# SMTP-Server testen  
+# Test SMTP server  
 telnet securesmtp.t-online.de 587
 ```
 
 ## Performance Monitoring
 
-### Speicherverbrauch überwachen
+### Monitor Memory Usage
 ```bash
-# Mit Node.js memory usage
+# With Node.js memory usage
 node --max-old-space-size=4096 dist/index.js
 ```
 
-### IMAP-Verbindung optimieren
+### Optimize IMAP Connection
 ```typescript
 // In email-client.ts
 keepalive: {
@@ -127,33 +127,33 @@ keepalive: {
 }
 ```
 
-## Erweiterte Tests
+## Advanced Tests
 
-### 1. Lasttest
+### 1. Load Test
 ```bash
-# Mehrere gleichzeitige Anfragen
+# Multiple simultaneous requests
 for i in {1..10}; do
   echo "Test $i"
-  # Führe MCP-Anfrage aus
+  # Execute MCP request
 done
 ```
 
-### 2. Speicher-Leak-Test
+### 2. Memory Leak Test
 ```bash
-# Länger laufender Test
+# Long-running test
 timeout 300 npm run dev
 ```
 
-### 3. Ordner-Struktur-Test
+### 3. Folder Structure Test
 ```typescript
-// Teste komplexe Ordnerstrukturen
+// Test complex folder structures
 const folders = await emailClient.getFolders();
-console.log('Gefundene Ordner:', folders.length);
+console.log('Found folders:', folders.length);
 ```
 
 ## CI/CD Integration
 
-### GitHub Actions Beispiel
+### GitHub Actions Example
 ```yaml
 name: Test MCP Server
 on: [push, pull_request]
@@ -174,9 +174,9 @@ jobs:
       EMAIL_PASSWORD: ${{ secrets.TEST_PASSWORD }}
 ```
 
-### Testumgebung Setup
+### Test Environment Setup
 ```bash
-# Separater Test-Account empfohlen
+# Separate test account recommended
 EMAIL_ADDRESS=test@t-online.de
 EMAIL_PASSWORD=test-app-password
 ```
