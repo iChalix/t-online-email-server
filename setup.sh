@@ -1,66 +1,181 @@
 #!/bin/bash
 
-# T-Online E-Mail MCP Server Setup Script
+# T-Online Email MCP Server Setup Script
 
-echo "🚀 T-Online E-Mail MCP Server Setup"
-echo "===================================="
+set -euo pipefail
 
-# Überprüfe Node.js Installation
-if ! command -v node &> /dev/null; then
-    echo "❌ Node.js ist nicht installiert. Bitte installiere Node.js zuerst."
-    exit 1
+# Script directory
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+
+# Color support detection
+if [ -t 1 ] && command -v tput &> /dev/null && [ "$(tput colors 2>/dev/null || echo 0)" -ge 8 ]; then
+    RED=$(tput setaf 1)
+    GREEN=$(tput setaf 2)
+    YELLOW=$(tput setaf 3)
+    BLUE=$(tput setaf 4)
+    RESET=$(tput sgr0)
+else
+    RED=""
+    GREEN=""
+    YELLOW=""
+    BLUE=""
+    RESET=""
 fi
 
-# Überprüfe npm Installation
-if ! command -v npm &> /dev/null; then
-    echo "❌ npm ist nicht installiert. Bitte installiere npm zuerst."
-    exit 1
-fi
+# Helper functions
+log_info() {
+    echo "${BLUE}ℹ${RESET}  $1"
+}
 
-echo "✅ Node.js $(node --version) gefunden"
-echo "✅ npm $(npm --version) gefunden"
+log_success() {
+    echo "${GREEN}✅${RESET} $1"
+}
 
-# Wechsle ins Projektverzeichnis
-cd "$(dirname "$0")"
+log_error() {
+    echo "${RED}❌${RESET} $1" >&2
+}
 
-# Installiere Abhängigkeiten
-echo ""
-echo "📦 Installiere Abhängigkeiten..."
-npm install
+log_warning() {
+    echo "${YELLOW}⚠️${RESET}  $1"
+}
 
-if [ $? -ne 0 ]; then
-    echo "❌ Fehler beim Installieren der Abhängigkeiten"
-    exit 1
-fi
-
-# Erstelle .env-Datei falls nicht vorhanden
-if [ ! -f .env ]; then
+header() {
     echo ""
-    echo "📝 Erstelle .env-Datei..."
-    cp .env.example .env
-    echo "✅ .env-Datei erstellt. Bitte bearbeite sie mit deinen t-online Zugangsdaten."
-fi
+    echo "${BLUE}🚀 T-Online Email MCP Server Setup${RESET}"
+    echo "===================================="
+    echo ""
+}
 
-# Kompiliere TypeScript
-echo ""
-echo "🔨 Kompiliere TypeScript..."
-npm run build
+# Check prerequisites
+check_prerequisites() {
+    local errors=0
+    
+    log_info "Checking prerequisites..."
+    
+    # Check Node.js
+    if ! command -v node &> /dev/null; then
+        log_error "Node.js is not installed. Please install Node.js first."
+        errors=$((errors + 1))
+    else
+        local node_version=$(node --version 2>/dev/null || echo "unknown")
+        log_success "Node.js $node_version found"
+        
+        # Check minimum Node.js version (v16+)
+        local major_version=$(echo "$node_version" | cut -d. -f1 | sed 's/v//')
+        if [ "$major_version" -lt 16 ]; then
+            log_warning "Node.js v16 or higher is recommended (found $node_version)"
+        fi
+    fi
+    
+    # Check npm
+    if ! command -v npm &> /dev/null; then
+        log_error "npm is not installed. Please install npm first."
+        errors=$((errors + 1))
+    else
+        log_success "npm $(npm --version 2>/dev/null || echo "unknown") found"
+    fi
+    
+    return $errors
+}
 
-if [ $? -ne 0 ]; then
-    echo "❌ Fehler beim Kompilieren"
-    exit 1
-fi
+# Install dependencies
+install_dependencies() {
+    log_info "Installing dependencies..."
+    
+    if npm install; then
+        log_success "Dependencies installed successfully"
+        return 0
+    else
+        log_error "Failed to install dependencies"
+        return 1
+    fi
+}
 
-echo ""
-echo "✅ Setup erfolgreich abgeschlossen!"
-echo ""
-echo "📋 Nächste Schritte:"
-echo "1. Bearbeite die .env-Datei mit deinen t-online Zugangsdaten"
-echo "2. Erstelle ein App-Passwort in deinem t-online Kundencenter"
-echo "3. Teste den Server: npm run dev"
-echo "4. Konfiguriere Claude Desktop (siehe claude-desktop-config.json)"
-echo ""
-echo "⚙️  WICHTIG: Alle Konfiguration erfolgt über die .env-Datei!"
-echo "   Keine Umgebungsvariablen in Claude Desktop erforderlich."
-echo ""
-echo "📖 Weitere Informationen findest du in der README.md"
+# Setup environment file
+setup_env_file() {
+    if [ -f .env ]; then
+        log_info ".env file already exists"
+        return 0
+    fi
+    
+    if [ ! -f .env.example ]; then
+        log_error ".env.example file not found"
+        return 1
+    fi
+    
+    log_info "Creating .env file..."
+    if cp .env.example .env; then
+        log_success ".env file created. Please edit it with your t-online credentials."
+        return 0
+    else
+        log_error "Failed to create .env file"
+        return 1
+    fi
+}
+
+# Build TypeScript
+build_typescript() {
+    log_info "Building TypeScript..."
+    
+    if npm run build; then
+        log_success "TypeScript compiled successfully"
+        return 0
+    else
+        log_error "Failed to compile TypeScript"
+        return 1
+    fi
+}
+
+# Print next steps
+print_next_steps() {
+    echo ""
+    echo "${GREEN}✅ Setup completed successfully!${RESET}"
+    echo ""
+    echo "${BLUE}📋 Next Steps:${RESET}"
+    echo "1. Edit the .env file with your t-online credentials"
+    echo "2. Create an app password in your t-online customer center"
+    echo "3. Test the server: ${YELLOW}npm run dev${RESET}"
+    echo "4. Configure Claude Desktop (see claude-desktop-config.json)"
+    echo ""
+    echo "${YELLOW}⚙️  IMPORTANT:${RESET} All configuration is done via the .env file!"
+    echo "   No environment variables needed in Claude Desktop."
+    echo ""
+    echo "📖 For more information, see README.md"
+}
+
+# Main execution
+main() {
+    header
+    
+    # Change to script directory
+    cd "$SCRIPT_DIR"
+    
+    # Run setup steps
+    if ! check_prerequisites; then
+        log_error "Prerequisites check failed. Please install missing dependencies."
+        exit 1
+    fi
+    
+    echo ""
+    
+    if ! install_dependencies; then
+        exit 1
+    fi
+    
+    echo ""
+    
+    if ! setup_env_file; then
+        exit 1
+    fi
+    
+    echo ""
+    
+    if ! build_typescript; then
+        exit 1
+    fi
+    
+    print_next_steps
+}
+
+# Run main function
+main "$@"
