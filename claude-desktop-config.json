@@ -1,0 +1,8 @@
+{
+  "mcpServers": {
+    "t-online-email": {
+      "command": "node",
+      "args": ["/Users/jens/Projects/MCP/t-online-email-server/dist/index.js"]
+    }
+  }
+}
