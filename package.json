@@ -1,6 +1,6 @@
 {
   "name": "t-online-email-mcp-server",
-  "version": "1.0.0",
+  "version": "1.1.1",
   "description": "MCP Server for t-online email management",
   "main": "dist/index.js",
   "type": "module",
